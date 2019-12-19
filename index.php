@@ -25,11 +25,18 @@ if (isset($_GET["nextPage"])) {
 <body>
 
 <div class="container">
-    <input type="button" value="Добавить пользователя">
+    <h1>Список пользователей</h1>
+    <a href="adduser.php">Добавить пользователя</a>
+    <br>
+    <br>
+    <form action="deluser.php" method="post" id="formDelete">
+        <input type="submit" value="Удалить выбранных пользоватей" class="btn">
+        <input type="hidden" name="group" value="group">
+    </form>
     <br>
     <table class="users">
         <tr>
-            <th class="check"><input type="checkbox"></th>
+            <th class="check"><input type="checkbox" onclick="actionGroupCheck()" class="th-checkbox"></th>
             <th>Имя</th>
             <th>Логин</th>
             <th>Почта</th>
@@ -45,14 +52,16 @@ if (isset($_GET["nextPage"])) {
         $query = "SELECT id, name, login, mail FROM users WHERE deleted<>1 LIMIT $prevPage,$nextPage";
         $result = mysqli_query($link, $query);
         while($tmp = mysqli_fetch_array($result)){
-            echo "<tr><td class=\"check\"><input type=\"checkbox\">
+            echo "<tr><td class=\"check\"><input type=\"checkbox\" name='check[".$tmp["id"]."]' form='formDelete' class='user-checkbox'>
                     <td>".$tmp["name"]."</td>
                     <td>".$tmp["login"]."</td>
                     <td>".$tmp["mail"]."</td>
                     <td><a href='deluser.php?id=".$tmp["id"]."'><img src='delete.png'></a></td></tr>"  ;
         }
         $query = "SELECT COUNT(*) FROM users WHERE deleted<>1 ";
-        $countPage = (int)(mysqli_fetch_row($result)/$сountRowPerPage)+1;
+        $result = mysqli_query($link, $query);
+        $tmp = mysqli_fetch_row($result);
+        $countPage = (int)($tmp[0]/$сountRowPerPage)+1;
         mysqli_close($link);
         ?>
 
@@ -79,6 +88,7 @@ if (isset($_GET["nextPage"])) {
     ?>
     </div>
 </div>
+<script src="main.js"></script>
 </body>
 </html>
 
