@@ -1,0 +1,29 @@
+.container{
+    width: 800px;
+    margin: auto;
+}
+
+.navigation {
+    text-align: center;
+}
+table.users{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.users tr:hover {
+    background-color: lightgreen;
+}
+
+.users td {
+    text-align: center;
+}
+
+.check{
+    width: 25px;
+}
+
+.current-page {
+    font-weight: bold;
+}
