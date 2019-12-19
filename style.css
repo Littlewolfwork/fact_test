@@ -4,6 +4,10 @@ fieldset {
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
 .container{
     width: 800px;
     margin: auto;
@@ -17,6 +21,12 @@ table.users{
     width: 100%;
     border-collapse: collapse;
 }
+
+ tr:nth-child(odd) {
+    background-color: #f0f0f2;
+}
+
+
 .users tr:hover {
     background-color: lightgreen;
 }

@@ -1,13 +1,18 @@
 <?php
 include_once "conf.php";
-
+$link = mysqli_connect($dbServer, $dbUser, $dbPass, $db);
+if (!$link) {
+    echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
+}
 if (isset($_GET["prevPage"])) {
     $prevPage = $_GET["prevPage"];
+    $nextPage = $prevPage+$сountRowPerPage;
 } else {
     $prevPage = 0;
 }
 if (isset($_GET["nextPage"])) {
     $nextPage = $_GET["nextPage"];
+    $prevPage = $nextPage - $сountRowPerPage;
 } else {
     $nextPage = $сountRowPerPage;
 }
@@ -34,21 +39,42 @@ if (isset($_GET["nextPage"])) {
         <input type="hidden" name="group" value="group">
     </form>
     <br>
+    <div class = "navigation">
+        <?php
+        $query = "SELECT COUNT(*) FROM users WHERE deleted<>1 ";
+        $result = mysqli_query($link, $query);
+        $tmp = mysqli_fetch_row($result);
+        $countPage = (int)($tmp[0]/$сountRowPerPage)+1;
+        if ($prevPage!=0){
+            echo "<a href=\"index.php?prevPage=".($prevPage-$сountRowPerPage)."&nextPage=$prevPage\"> < </a>";
+        }
+        for($i=0;$i<$countPage;$i++){
+
+            if ((($prevPage/$сountRowPerPage))==$i){
+                $currentPage = "class='current-page'";
+            }
+            else{
+                $currentPage = "";
+            }
+            echo " <a href='index.php?prevPage=".($i*$сountRowPerPage)."&nextPage=".(($i+1)*$сountRowPerPage)."' $currentPage>".($i+1)."</a> ";
+        }
+
+        if ($nextPage<($countPage*$сountRowPerPage)){
+            echo "<a href=\"index.php?prevPage=$nextPage&nextPage=".(($nextPage+$сountRowPerPage))."\"> > </a>";
+        }
+
+        ?>
+    </div>
     <table class="users">
         <tr>
             <th class="check"><input type="checkbox" onclick="actionGroupCheck()" class="th-checkbox"></th>
-            <th>Имя</th>
-            <th>Логин</th>
-            <th>Почта</th>
-            <th></th>
+            <th width="30%">Имя</th>
+            <th width="30%">Логин</th>
+            <th width="30%">Почта</th>
+            <th width="25px"></th>
         </tr>
 
         <?php
-
-        $link = mysqli_connect($dbServer, $dbUser, $dbPass, $db);
-        if (!$link) {
-            echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
-        }
         $query = "SELECT id, name, login, mail FROM users WHERE deleted<>1 LIMIT $prevPage,$nextPage";
         $result = mysqli_query($link, $query);
         while($tmp = mysqli_fetch_array($result)){
@@ -58,35 +84,11 @@ if (isset($_GET["nextPage"])) {
                     <td>".$tmp["mail"]."</td>
                     <td><a href='deluser.php?id=".$tmp["id"]."'><img src='delete.png'></a></td></tr>"  ;
         }
-        $query = "SELECT COUNT(*) FROM users WHERE deleted<>1 ";
-        $result = mysqli_query($link, $query);
-        $tmp = mysqli_fetch_row($result);
-        $countPage = (int)($tmp[0]/$сountRowPerPage)+1;
         mysqli_close($link);
         ?>
 
     </table>
-    <div class = "navigation">
-    <?php
-    if ($prevPage!=0){
-        echo "<a href=\"index.php?prevPage=".(($prevPage-1)*$сountRowPerPage)."\"><</a>";
-    }
-    for($i=1;$i<=$countPage;$i++){
 
-        if ((($prevPage/$сountRowPerPage)+1)==$i){
-            $currentPage = "class='current-page'";
-        }
-        else{
-            $currentPage = "";
-        }
-        echo " <a href='index.php?prevPage=".(($i-1)*$сountRowPerPage)."&nextPage=".((i+1)*$сountRowPerPage)."' $currentPage>$i</a> ";
-    }
-    if ($nextPage<$countPage){
-        echo "<a href=\"index.php?nextPage=".(($nextPage+1)*$сountRowPerPage)."\"><</a>";
-    }
-
-    ?>
-    </div>
 </div>
 <script src="main.js"></script>
 </body>
