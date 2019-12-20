@@ -75,7 +75,7 @@ if (isset($_GET["nextPage"])) {
         </tr>
 
         <?php
-        $query = "SELECT id, name, login, mail FROM users WHERE deleted<>1 LIMIT $prevPage,$nextPage";
+        $query = "SELECT id, name, login, mail FROM users WHERE deleted<>1 LIMIT $prevPage,$сountRowPerPage";
         $result = mysqli_query(db::$link, $query);
         while($tmp = mysqli_fetch_array($result)){
             echo "<tr><td class=\"check\"><input type=\"checkbox\" name='check[".$tmp["id"]."]' form='formDelete' class='user-checkbox'>
