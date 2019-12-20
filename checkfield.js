@@ -1,4 +1,4 @@
-function emptyField(idField){
+function isNotEmptyField(idField){
     if (document.getElementById(idField).value==""){
         document.getElementById("alerts").innerText = "Заполните пустые поля!";
         document.getElementById(idField).style.border = "2px red solid";
@@ -12,20 +12,12 @@ function emptyField(idField){
 
 
 function checkField(){
-  /*  let login = document.getElementById("login").value;
-    let name = document.getElementById("name").value;
-    let mail = document.getElementById("mail").value;
-    let password = document.getElementById("password").value;
-    let password2 = document.getElementById("password2").value;
-    */
     var startSubmit = 1;
-   // console.log(startSubmit);
-   // console.log('test');
-    startSubmit = emptyField('login');
-    startSubmit = emptyField('name');
-    startSubmit = emptyField('mail');
-    startSubmit = emptyField('password');
-    startSubmit = emptyField('password2');
+    startSubmit = isNotEmptyField('login');
+    startSubmit = isNotEmptyField('name');
+    startSubmit = isNotEmptyField('mail');
+    startSubmit = isNotEmptyField('password');
+    startSubmit = isNotEmptyField('password2');
     if (document.getElementById("password").value != document.getElementById("password2").value){
         document.getElementById("alerts").innerHTML += "<br>Пароли не совпадают!";
         startSubmit = 0;

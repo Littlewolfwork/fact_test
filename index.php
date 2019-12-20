@@ -1,9 +1,9 @@
 <?php
 include_once "conf.php";
-$link = mysqli_connect($dbServer, $dbUser, $dbPass, $db);
-if (!$link) {
-    echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
-}
+include_once "db.php";
+
+DB::connect($dbServer, $dbUser, $dbPass, $db);
+
 if (isset($_GET["prevPage"])) {
     $prevPage = $_GET["prevPage"];
     $nextPage = $prevPage+$сountRowPerPage;
@@ -42,7 +42,7 @@ if (isset($_GET["nextPage"])) {
     <div class = "navigation">
         <?php
         $query = "SELECT COUNT(*) FROM users WHERE deleted<>1 ";
-        $result = mysqli_query($link, $query);
+        $result = mysqli_query(db::$link, $query);
         $tmp = mysqli_fetch_row($result);
         $countPage = (int)($tmp[0]/$сountRowPerPage)+1;
         if ($prevPage!=0){
@@ -76,7 +76,7 @@ if (isset($_GET["nextPage"])) {
 
         <?php
         $query = "SELECT id, name, login, mail FROM users WHERE deleted<>1 LIMIT $prevPage,$nextPage";
-        $result = mysqli_query($link, $query);
+        $result = mysqli_query(db::$link, $query);
         while($tmp = mysqli_fetch_array($result)){
             echo "<tr><td class=\"check\"><input type=\"checkbox\" name='check[".$tmp["id"]."]' form='formDelete' class='user-checkbox'>
                     <td>".$tmp["name"]."</td>
@@ -84,7 +84,7 @@ if (isset($_GET["nextPage"])) {
                     <td>".$tmp["mail"]."</td>
                     <td><a href='deluser.php?id=".$tmp["id"]."'><img src='delete.png'></a></td></tr>"  ;
         }
-        mysqli_close($link);
+        mysqli_close(db::$link);
         ?>
 
     </table>

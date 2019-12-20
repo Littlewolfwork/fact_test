@@ -1,3 +1,6 @@
 .idea/*
 GAPI.txt
 demo.php
+google-api-php-client/*
+vendor/*
+credentials.json

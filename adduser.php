@@ -1,43 +1,43 @@
 <?php
 session_start();
+include_once "conf.php";
+include_once "db.php";
+
+DB::connect($dbServer, $dbUser, $dbPass, $db);
 
 function checkTransfer($nameVar){
     if (isset($_POST[$nameVar])) {
         return $_POST[$nameVar];
     } else {
         $_SESSION["error"] = "Ошибка при передаче данных! ($nameVar)";
+        mysqli_close(db::$link);
         header("Location: adduser.php");
         exit;
     }
 }
 
-include_once "conf.php";
-$link = mysqli_connect($dbServer, $dbUser, $dbPass, $db);
-if (!$link) {
-    echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
-}
+
 
 if (isset($_POST["submited"])) {
-    $login = checkTransfer("login");
-    $name = checkTransfer("name");
-    $mail = checkTransfer("mail");
+    $login = mysqli_real_escape_string(db::$link, checkTransfer("login"));
+    $name =  mysqli_real_escape_string(db::$link, checkTransfer("name"));
+    $mail =  mysqli_real_escape_string(db::$link, checkTransfer("mail"));
     $password = checkTransfer("password");
     $query = "SELECT COUNT(*) FROM users WHERE login='$login'";
-    $result = mysqli_query($link, $query);
+    $result = mysqli_query(db::$link, $query);
     $tmp = mysqli_fetch_row($result);
     $countUsers = $tmp[0];
     if ($countUsers > 0) {
         $_SESSION["error"]="Такой пользователь уже существует!";
+        mysqli_close(db::$link);
         header("Location: adduser.php");
         exit;
         }
     else{
-
-        // TODO добавить проверку значений на корректность mysql
-
         $query = "INSERT INTO users(login,name,mail,password, date) VALUES ('$login','$name','$mail','".md5($password)."', CURRENT_TIMESTAMP)";
-        mysqli_query($link, $query);
+        mysqli_query(db::$link, $query);
         $_SESSION["created"] = "created";
+        mysqli_close(db::$link);
         header("Location: adduser.php");
         exit;
     }
@@ -59,6 +59,7 @@ if (isset($_POST["submited"])) {
         unset($_SESSION["created"]);
         echo "Пользователь успешно создан! <br>";
         echo "<a href='index.php'>Вернуться к списку пользователей</a>";
+        mysqli_close(db::$link);
         exit();
     }
     if (!empty($_SESSION["error"])) {
